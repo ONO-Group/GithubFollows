@@ -2,6 +2,7 @@ package com.skydoves.githubfollows
 
 import com.skydoves.githubfollows.di.DaggerAppComponent
 import com.skydoves.githubfollows.preference.PreferenceComponent_PrefAppComponent
+import com.squareup.leakcanary.LeakCanary
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import timber.log.Timber
@@ -11,22 +12,29 @@ import timber.log.Timber
  * Copyright (c) 2018 skydoves rights reserved.
  */
 
-class ApplicationClazz : DaggerApplication() {
+class GithubFollowsApplication : DaggerApplication() {
+
+    private val appComponent = DaggerAppComponent.builder()
+            .application(this)
+            .build()
 
     override fun onCreate() {
         super.onCreate()
 
-        DaggerAppComponent.builder()
-                .application(this)
-                .build()
-                .inject(this)
+        if (!LeakCanary.isInAnalyzerProcess(this)) {
+            LeakCanary.install(this)
+        }
 
-        Timber.plant(Timber.DebugTree())
+        appComponent.inject(this)
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
 
         PreferenceComponent_PrefAppComponent.init(this)
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.builder().application(this).build()
+        return appComponent
     }
 }

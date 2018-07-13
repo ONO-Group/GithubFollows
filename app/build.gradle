@@ -4,14 +4,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion Versions.compileSdk
     defaultConfig {
         applicationId "com.skydoves.githubfollows"
-        minSdkVersion 16
-        targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        versionCode Versions.versionCode
+        versionName Versions.versionName
+        testInstrumentationRunner "com.skydoves.githubfollows.util.JunitTestRunner"
     }
     buildTypes {
         release {
@@ -25,51 +25,71 @@ android {
     kapt {
         correctErrorTypes = true
     }
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        androidTest.java.srcDirs += "src/test-common/java"
+        test.java.srcDirs += "src/test-common/java"
+    }
 }
 
 dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
+    testCompile Dependencies.junit
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation "org.jetbrains.anko:anko:$anko_version"
-    implementation "com.android.support:appcompat-v7:$support_library_version"
-    implementation "com.android.support:design:$support_library_version"
-    implementation "com.android.support:cardview-v7:$support_library_version"
-    implementation "com.android.support:recyclerview-v7:$support_library_version"
-    implementation "com.github.skydoves:powermenu:$powermenu_version"
 
-    implementation "android.arch.lifecycle:extensions:$arch_version"
-    implementation "android.arch.persistence.room:runtime:$arch_version"
-    kapt "android.arch.persistence.room:compiler:$arch_version"
+    implementation Dependencies.support_appcompat
+    implementation Dependencies.support_design
+    implementation Dependencies.support_cardview
+    implementation Dependencies.support_recyclerview
 
-    implementation "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    implementation Dependencies.kotlin_stdlib
+    implementation Dependencies.anko
 
-    implementation "com.google.dagger:dagger-android:$dagger_version"
-    implementation "com.google.dagger:dagger-android-support:$dagger_version"
-    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+    implementation Dependencies.arch_lifecycle
+    implementation Dependencies.arch_room
+    kapt Dependencies.arch_room_compiler
+    testImplementation Dependencies.arch_core_testing
+    testImplementation Dependencies.mockWebServer
 
-    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
-    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
+    implementation Dependencies.dagger
+    kapt Dependencies.dagger_compiler
 
-    implementation "com.github.skydoves:preferenceroom:$preferenceroom_version"
-    kapt "com.github.skydoves:preferenceroom-processor:$preferenceroom_version"
+    implementation Dependencies.dagger_android
+    implementation Dependencies.dagger_android_support
+    kapt Dependencies.dagger_android_compiler
 
-    implementation "com.google.code.gson:gson:$gson_version"
+    kapt Dependencies.dataBinding
 
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation Dependencies.rxjava
+    implementation Dependencies.rxandroid
 
-    implementation "com.jakewharton.timber:timber:$timber_version"
+    implementation Dependencies.preferenceroom
+    kapt Dependencies.preferenceroom_compiler
 
-    implementation "com.github.bumptech.glide:glide:$glide_version"
-    kapt "com.github.bumptech.glide:compiler:$glide_version"
+    implementation Dependencies.gson
 
-    implementation "com.caverock:androidsvg:$androidsvg_version"
+    implementation Dependencies.retrofit
+    implementation Dependencies.retrofit_gson
 
-    implementation "io.supercharge:shimmerlayout:$shimmer_version"
+    implementation Dependencies.timber
+    debugCompile Dependencies.memoryLeakDebug
+    releaseCompile Dependencies.memoryLeakRelease
+
+    implementation Dependencies.glide
+    kapt Dependencies.glide_compiler
+
+    implementation Dependencies.powermenu
+    implementation Dependencies.androidsvg
+    implementation Dependencies.shimmerlayout
+
+    testImplementation Dependencies.mockito
+    androidTestImplementation Dependencies.mockitoAndroid
 }

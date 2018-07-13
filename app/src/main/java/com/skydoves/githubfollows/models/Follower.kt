@@ -1,5 +1,7 @@
 package com.skydoves.githubfollows.models
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcel
 import android.os.Parcelable
 
@@ -8,7 +10,9 @@ import android.os.Parcelable
  * Copyright (c) 2018 skydoves rights reserved.
  */
 
-data class Follower(val login: String,
+@Entity
+data class Follower(@PrimaryKey(autoGenerate = true) val number: Int,
+                    val login: String,
                     val id: Int,
                     val avatar_url: String,
                     val gravatar_id: String,
@@ -24,8 +28,12 @@ data class Follower(val login: String,
                     val events_url: String,
                     val received_events_url: String,
                     val type: String,
-                    val site_admin: Boolean) : Parcelable {
+                    val site_admin: Boolean,
+                    var owner: String,
+                    var page: Int,
+                    var isFollower: Boolean) : Parcelable {
     constructor(source: Parcel) : this(
+            source.readInt(),
             source.readString(),
             source.readInt(),
             source.readString(),
@@ -42,12 +50,16 @@ data class Follower(val login: String,
             source.readString(),
             source.readString(),
             source.readString(),
+            1 == source.readInt(),
+            source.readString(),
+            source.readInt(),
             1 == source.readInt()
     )
 
     override fun describeContents() = 0
 
     override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
+        writeInt(number)
         writeString(login)
         writeInt(id)
         writeString(avatar_url)
@@ -65,6 +77,9 @@ data class Follower(val login: String,
         writeString(received_events_url)
         writeString(type)
         writeInt((if (site_admin) 1 else 0))
+        writeString(owner)
+        writeInt(page)
+        writeInt((if (isFollower) 1 else 0))
     }
 
     companion object {
